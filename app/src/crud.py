@@ -2,7 +2,7 @@ from conexao import criar_conexao
 from tabulate import tabulate
 import mysql.connector
 import os
-
+from datetime import datetime  # Adicionado pra pegar a data/hora atual
 
 def limpar_tela():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -27,14 +27,9 @@ def conferir_usuario(user, senha):
     conn = criar_conexao()
     if conn is None:
         return False
-    
     cursor = conn.cursor()
     try:
-        # Verifica usuário e senha juntos
-        cursor.execute(
-            "SELECT * FROM tbUser WHERE Nome = %s AND Senha = %s",  # Correção aqui
-            (user, senha)  # Faltava o parêntese de fechamento
-        )
+        cursor.execute("SELECT * FROM tbUser WHERE Nome = %s AND Senha = %s", (user, senha))
         resultado = cursor.fetchone()
         return resultado is not None
     except mysql.connector.Error as err:
@@ -48,21 +43,14 @@ def criar_usuario(user, senha, saldo):
     conn = criar_conexao()
     if conn is None:
         return False
-
     cursor = conn.cursor()
     try:
-        # Verifica se usuário já existe
         cursor.execute("SELECT * FROM tbUser WHERE Nome = %s", (user,))
         if cursor.fetchone():
             print("Usuário já existe!")
             return False
-
-        # Cria novo usuário
-        cursor.execute(
-            "INSERT INTO tbUser (Nome, Senha, Saldo) VALUES (%s, %s, %s)",
-            (user, senha, saldo)
-        )
-        conn.commit()  # Importante para salvar no banco
+        cursor.execute("INSERT INTO tbUser (Nome, Senha, Saldo) VALUES (%s, %s, %s)", (user, senha, saldo))
+        conn.commit()
         print("Usuário criado com sucesso!")
         return True
     except mysql.connector.Error as err:
@@ -71,12 +59,11 @@ def criar_usuario(user, senha, saldo):
     finally:
         cursor.close()
         conn.close()
-        
+
 def exibir_tabelas():
     conn = criar_conexao()
     if conn is None:
         return
-
     cursor = conn.cursor()
     try:
         cursor.execute("SHOW TABLES")
@@ -97,7 +84,6 @@ def exibir_dados_transacoes(user="admin"):
         conexao = criar_conexao()
         cursor = conexao.cursor()
         
-        # Se o usuário não for admin, busque o ID correspondente ao nome
         if user != "admin":
             cursor.execute("SELECT Id FROM tbUser WHERE Nome = %s", (user,))
             row = cursor.fetchone()
@@ -106,28 +92,27 @@ def exibir_dados_transacoes(user="admin"):
             else:
                 print("Usuário não encontrado.")
                 return
-            # Filtra as transações do usuário (RemetenteId = user_id)
             cursor.execute("SELECT * FROM tbTransacoes WHERE RemetenteId = %s", (user_id,))
         else:
-            # Se for admin, exibe todas as transações
             cursor.execute("SELECT * FROM tbTransacoes")
             
         resultado = cursor.fetchall()
         
         dados_formatados = []
         for linha in resultado:
-            quantia = float(linha[3])  # Quantia está na coluna de índice 3
+            quantia = float(linha[3])
             dados_formatados.append([
                 linha[0],  # Id da Transação
                 linha[1],  # RemetenteId
+                linha[2],  # DestinatarioId (pode ser NULL)
                 f"R$ {quantia:,.2f}".replace(".", "X").replace(",", ".").replace("X", ","),  # Formatação BR
-                linha[2],  # DestinatarioId
-                linha[4]   # Data e Hora
+                linha[4],  # DataHora
+                linha[5]   # Tipo (novo campo)
             ])
             
         print(tabulate(
             dados_formatados,
-            headers=["ID", "RemetenteId", "Quantia", "DestinatarioId", "Data e Hora"],
+            headers=["ID", "RemetenteId", "DestinatarioId", "Quantia", "Data e Hora", "Tipo"],
             tablefmt="pretty",
             numalign="right"
         ))
@@ -141,26 +126,23 @@ def exibir_dados_transacoes(user="admin"):
         if conexao and conexao.is_connected():
             conexao.close()
 
-           
 def exibir_dados_user():
     conexao = None
     cursor = None
     try:
-        # Cria conexão usando sua função (supondo que criar_conexao() retorna uma conexão válida)
         conexao = criar_conexao()
         cursor = conexao.cursor()
-        
         cursor.execute("SELECT * FROM tbUser")
         resultado = cursor.fetchall()
         
         dados_formatados = []
         for linha in resultado:
-            saldo = float(linha[3])  # Conversão para float
+            saldo = float(linha[3])
             dados_formatados.append([
-                linha[0],  # ID
-                linha[1],  # Usuário
-                "******",  # Mascarando senha (boas práticas)
-                f"R$ {saldo:,.2f}".replace(".", "X").replace(",", ".").replace("X", ",")  # Formatação BR
+                linha[0],
+                linha[1],
+                "******",
+                f"R$ {saldo:,.2f}".replace(".", "X").replace(",", ".").replace("X", ",")
             ])
             
         print(tabulate(
@@ -170,27 +152,24 @@ def exibir_dados_user():
             numalign="right"
         ))
         print(f'{len(dados_formatados)} registros encontrados.')
-        
     
     except mysql.connector.Error as e:
         print(f"Erro de banco de dados: {e}")
     finally:
-        # Fechar recursos corretamente
         if cursor:
             cursor.close()
         if conexao and conexao.is_connected():
             conexao.close()
-            
+
 def editar_dados(tabela, coluna, novo_valor, condicao):
     conn = criar_conexao()
     if conn is None:
         return
-    
     cursor = conn.cursor()
     try:
-        query = f"UPDATE {tabela} SET {coluna} = %s WHERE id = {condicao}"
-        cursor.execute(query, (novo_valor,))
-        conn.commit()  # Importante para salvar no banco
+        query = f"UPDATE {tabela} SET {coluna} = %s WHERE id = %s"  # Corrigido pra usar placeholder
+        cursor.execute(query, (novo_valor, condicao))
+        conn.commit()
         print("Dados atualizados com sucesso!")
     except mysql.connector.Error as err:
         print("Erro ao atualizar dados:", err)
@@ -202,24 +181,22 @@ def apagar_dados(tabela, condicao):
     conn = criar_conexao()
     if conn is None:
         return
-    
     cursor = conn.cursor()
     try:
-        query = f"DELETE FROM {tabela} WHERE id = {condicao}"
-        cursor.execute(query)
-        conn.commit()  # Importante para salvar no banco
+        query = f"DELETE FROM {tabela} WHERE id = %s"  # Corrigido pra usar placeholder
+        cursor.execute(query, (condicao,))
+        conn.commit()
         print("Dados apagados com sucesso!")
     except mysql.connector.Error as err:
         print("Erro ao apagar dados:", err)
     finally:
         cursor.close()
         conn.close()
-        
+
 def exibir_saldo(usuario):
     conn = criar_conexao()
     if conn is None:
         return "Erro ao conectar ao banco de dados."
-
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT Saldo FROM tbUser WHERE Nome = %s", (usuario,))
@@ -235,35 +212,36 @@ def exibir_saldo(usuario):
         cursor.close()
         conn.close()
 
-        
 def depositar(usuario, valor):
     conn = criar_conexao()
     if conn is None:
         return
     cursor = conn.cursor()
     try:
-        # Verifica se o valor é positivo
         if valor <= 0:
             print("Valor inválido para depósito.")
             return
-        
-        # Atualiza o saldo do usuário
-        cursor.execute("UPDATE tbUser SET Saldo = Saldo + %s WHERE Nome = %s", (valor, usuario))
-        conn.commit() 
+        user_id = pegar_id_usuario(usuario)
+        if not user_id:
+            print("Usuário não encontrado.")
+            return
+        # Usa a procedure pra registrar o depósito
+        data_atual = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.callproc('TransferirDinheiro', (user_id, None, valor, data_atual, 'Depósito'))
+        conn.commit()
         print(f"Depósito de R$ {valor:.2f} realizado com sucesso!")
     except mysql.connector.Error as err:
-        print("Erro ao depositar:", err)
+        print(f"Erro ao depositar: {err}")
     finally:
         cursor.close()
         conn.close()
-        
+
 def saque(usuario, valor):
     conn = criar_conexao()
     if conn is None:
         return
     cursor = conn.cursor()
     try:
-        # Verifica se o valor é suficiente
         cursor.execute("SELECT Saldo FROM tbUser WHERE Nome = %s", (usuario,))
         resultado = cursor.fetchone()
         if resultado:
@@ -274,33 +252,32 @@ def saque(usuario, valor):
         else:
             print("Usuário não encontrado.")
             return
-        
-        # Atualiza o saldo do usuário
-        cursor.execute("UPDATE tbUser SET Saldo = Saldo - %s WHERE Nome = %s", (valor, usuario))
-        conn.commit() 
+        user_id = pegar_id_usuario(usuario)
+        # Usa a procedure pra registrar o saque
+        data_atual = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.callproc('TransferirDinheiro', (user_id, None, valor, data_atual, 'Saque'))
+        conn.commit()
         print(f"Saque de R$ {valor:.2f} realizado com sucesso!")
     except mysql.connector.Error as err:
-        print("Erro ao sacar:", err)
+        print(f"Erro ao sacar: {err}")
     finally:
         cursor.close()
         conn.close()
-        
-def pix(remetente_id, destinatario_id, valor):
+
+def pix(remetente_id, destinatario_id, valor, tipo='Transferência'):
     conn = criar_conexao()
     if conn is None:
         print("Erro: Não foi possível conectar ao banco de dados.")
         return
     cursor = conn.cursor()
-    
     try:
-        # Chama a procedure usando IDs (inteiros)
-        cursor.callproc('TransferirDinheiro', (remetente_id, destinatario_id, valor))
+        # Adiciona data atual e tipo
+        data_atual = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.callproc('TransferirDinheiro', (remetente_id, destinatario_id, valor, data_atual, tipo))
         conn.commit()
-        print(f"Transferência de R$ {valor:.2f} realizada com sucesso!")
-    
+        print(f"Transferência de R$ {valor:.2f} ({tipo}) realizada com sucesso!")
     except mysql.connector.Error as err:
         print(f"Erro ao realizar a transferência: {err}")
-    
     finally:
         cursor.close()
         conn.close()

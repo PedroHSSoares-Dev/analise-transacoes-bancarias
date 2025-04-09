@@ -1,4 +1,4 @@
-from crud import limpar_tela,pegar_id_usuario, conferir_usuario, criar_usuario, exibir_tabelas, exibir_dados_user, exibir_dados_transacoes, editar_dados, apagar_dados, exibir_saldo, depositar, saque, pix
+from crud import limpar_tela, pegar_id_usuario, conferir_usuario, criar_usuario, exibir_tabelas, exibir_dados_user, exibir_dados_transacoes, editar_dados, apagar_dados, exibir_saldo, depositar, saque, pix
 from time import sleep
 
 while True:
@@ -100,7 +100,7 @@ while True:
                     print("===== MENU USUÁRIO =====")
                     print("1. Depósito")
                     print("2. Saque")
-                    print("3. Transferência")
+                    print("3. Transferência (PIX ou Transferência)")
                     print("4. Extrato")
                     print("5. Voltar")
                     print(f"Bem-vindo, {usuario}! {exibir_saldo(usuario)}")
@@ -110,7 +110,7 @@ while True:
                         limpar_tela()
                         print(exibir_saldo(usuario))
                         sleep(1)
-                        valor = float(input("Digite o valor do depósito: R$"))
+                        valor = float(input("Digite o valor do depósito: R$ "))
                         depositar(usuario, valor)
                         limpar_tela()
                         print("Depósito realizado com sucesso!")
@@ -122,29 +122,32 @@ while True:
                         limpar_tela()
                         print(exibir_saldo(usuario))
                         sleep(1)
-                        valor = float(input("Digite o valor do saque: R$"))
+                        valor = float(input("Digite o valor do saque: R$ "))
                         saque(usuario, valor)
                         limpar_tela()
                         print("Saque realizado com sucesso!")
                         sleep(1)
-                        
+                        print(exibir_saldo(usuario))
+                        input("Pressione Enter para continuar...")
+                    
                     elif opcao == "3":
                         limpar_tela()
                         print(exibir_saldo(usuario))
                         sleep(1)
-                        valor = float(input("Digite o valor da transferência: R$"))
-                        # Obter ID do destinatário pelo nome
+                        valor = float(input("Digite o valor da transferência: R$ "))
                         destinatario_nome = input("Digite o nome do usuário de destino: ").strip()
                         destinatario_id = pegar_id_usuario(destinatario_nome)
+                        tipo = input("Digite o tipo (PIX ou Transferência): ").strip().capitalize()
+                        if tipo not in ["PIX", "Transferência"]:
+                            print("Tipo inválido. Use 'PIX' ou 'Transferência'.")
+                            sleep(1)
+                            continue
                         
                         if destinatario_id:
-                            # Passar IDs (remetente_id, destinatario_id, valor)
                             remetente_id = pegar_id_usuario(usuario)
-                            pix(remetente_id, destinatario_id, valor)
-                            print("Transferência realizada com sucesso!")
+                            pix(remetente_id, destinatario_id, valor, tipo)
                         else:
                             print("Destinatário não encontrado.")
-                        
                         input("Pressione Enter para continuar...")
                         
                     elif opcao == "4":
@@ -168,12 +171,10 @@ while True:
     elif opcao == "2":
         novo_usuario = input("Novo usuário: ").strip()
         nova_senha = input("Nova senha: ").strip()
-        
         if not novo_usuario or not nova_senha:
             print("Usuário e senha não podem estar vazios!")
             sleep(1)
             continue
-            
         if criar_usuario(novo_usuario, nova_senha, 0.0):
             print("Conta criada com sucesso!")
             sleep(1)

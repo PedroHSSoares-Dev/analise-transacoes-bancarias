@@ -7,7 +7,8 @@ def criar_conexao():
             port=3306,
             user="root",
             password="123456",
-            database="meu_banco"
+            database="meu_banco",
+            charset="utf8mb4"
         )
         return conn
     except mysql.connector.Error as err:

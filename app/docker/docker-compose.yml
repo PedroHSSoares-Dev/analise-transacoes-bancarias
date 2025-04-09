@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   db:
+    container_name: db-001  # Nome do container
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: 123456
@@ -9,8 +10,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql       # Persistência dos dados
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Inicialização do banco de dados com o script SQL
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Script de inicialização
 
 volumes:
-  mysql_data:
+  mysql_data:  # Volume persistente declarado corretamente
