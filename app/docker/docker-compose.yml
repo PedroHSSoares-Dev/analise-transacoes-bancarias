@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: meu_banco
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql       # Persistência dos dados
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Inicialização do banco de dados com o script SQL
+
+volumes:
+  mysql_data:
