@@ -38,9 +38,9 @@ sistema_bancario/
 - Pandas
 - Matplotlib / Seaborn
 - MySQL
-- Docker (opcional)
-- Streamlit (opcional)
-- Power BI (opcional)
+- Docker 
+- Streamlit 
+- Power BI 
 
 ---
 
