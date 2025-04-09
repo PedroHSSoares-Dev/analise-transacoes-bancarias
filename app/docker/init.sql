@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS tbTransacoes (
 -- Inserindo alguns registros na tabela tbUser
 INSERT INTO tbUser (Nome, Senha, Saldo) VALUES 
     ('admin', 'admin', 0.0),
-    ('João Silva', 'senha123', 100.50),
+    ('Joao Silva', 'senha123', 100.50),
     ('Maria Santos', 'maria2024', 250.75),
     ('Carlos Oliveira', 'carOlive', 500.00),
     ('Ana Souza', 'ana_s123', 750.30),

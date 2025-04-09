@@ -1,91 +1,96 @@
-# Sistema Bancário - Análise de Dados
+# 💳 Análise de Transações Bancárias com Python
 
-Este projeto complementa o [CRUD bancário em Python](https://github.com/PedroHSSoares-Dev/crud) com foco em **Engenharia de Dados**, **Ciência de Dados** e **Visualização**.
-
----
-
-## 🔍 Objetivo
-
-Realizar um pipeline de análise de dados com base nas transações bancárias registradas pelo sistema:
-
-- 📥 Extração de dados do banco MySQL
-- 🧹 Transformação e limpeza com Pandas
-- 📊 Visualização com Matplotlib/Seaborn
-- 📈 (Opcional) Dashboard com Streamlit ou Power BI
+Este projeto combina um sistema bancário CRUD em Python com uma estrutura de análise de dados para explorar e visualizar transações registradas no banco de dados.
 
 ---
 
-## 📁 Estrutura do Projeto
+## 📦 Estrutura do Projeto
 
 ```
-sistema_bancario/
-├── analise/
-│   ├── extrair_dados.py     # Conecta e extrai dados do MySQL
-│   ├── transformar_dados.py # Limpa e transforma os dados
-│   ├── graficos.py          # Gera visualizações
-│   └── dashboard.py         # (Opcional) Dashboard com Streamlit
-├── app/                     # Projeto CRUD original (cópia ou submódulo)
-├── relatorio_transacoes.csv # Exportação para Power BI
-├── requirements.txt         # Dependências
-└── README.txt               # Este arquivo
+analise-transacoes-bancarias/
+├── analise/                   ← scripts para análise de dados
+│   ├── extrair_dados.py       ← extrai dados do MySQL para Pandas
+│   ├── transformar_dados.py   ← limpa e transforma os dados
+│   ├── graficos.py            ← gera gráficos com matplotlib/seaborn
+│   └── dashboard.py           ← dashboard interativo com Streamlit
+├── app/                       ← aplicação CRUD em Python
+│   ├── docker/
+│   │   ├── docker-compose.yml ← banco de dados MySQL com Docker
+│   │   └── init.sql           ← script de criação da base
+│   └── src/
+│       ├── conexao.py         ← conexão com banco de dados
+│       ├── crud.py            ← funções de operações (inserir, sacar, etc)
+│       └── menu.py            ← interface terminal com menu interativo
+└── README.md                  ← este arquivo
 ```
 
 ---
 
-## ⚙️ Tecnologias
+## 🎯 Objetivo
 
-- Python
-- Pandas
-- Matplotlib / Seaborn
-- MySQL
-- Docker 
-- Streamlit 
-- Power BI 
+Unir a prática de desenvolvimento com Python + MySQL com fundamentos de:
+
+- 🧪 Engenharia de Dados
+- 📊 Análise de Dados
+- 📈 Visualização de Dados
+- 🧠 Ciência de Dados
 
 ---
 
 ## 🚀 Como executar
 
-1. Clone este repositório:
+### 1. Suba o banco de dados com Docker:
 
 ```bash
-git clone https://github.com/SeuUsuario/sistema-bancario-analise-dados
-cd sistema-bancario-analise-dados
+cd app/docker
+docker-compose up -d
 ```
 
-2. Instale os pacotes:
+### 2. Rode o sistema bancário via terminal:
 
 ```bash
-pip install -r requirements.txt
+cd ../src
+python menu.py
 ```
 
-3. Execute os scripts de análise:
+### 3. Execute os scripts de análise:
 
 ```bash
-python analise/extrair_dados.py
-python analise/transformar_dados.py
-python analise/graficos.py
+cd ../../analise
+python extrair_dados.py
+python transformar_dados.py
+python graficos.py
 ```
 
-4. (Opcional) Rode o dashboard:
+### 4. Rode o dashboard (opcional):
 
 ```bash
-streamlit run analise/dashboard.py
+streamlit run dashboard.py
 ```
 
 ---
 
-## 📊 Exemplos de análise
+## 📊 Tipos de análise realizadas
 
 - Total movimentado por usuário
 - Volume de transações por mês
-- Gráfico de distribuição por tipo de operação (PIX, saque, depósito)
+- Distribuição de transações (saque, depósito, pix)
+- Dashboard interativo com filtros
 
 ---
 
-## 🤝 Créditos
+## 🛠 Tecnologias usadas
 
-Projeto base: [CRUD bancário em Python](https://github.com/PedroHSSoares-Dev/crud)  
-Autor: Pedro Henrique Soares  
+- Python (CRUD + análise)
+- MySQL (base de dados)
+- Pandas, Matplotlib, Seaborn
+- Streamlit (dashboard web)
+- Docker (banco em container)
 
+---
 
+## 👨‍💻 Autor
+
+Desenvolvido por Pedro Henrique Soares  
+Repositório original do CRUD: https://github.com/PedroHSSoares-Dev/crud  
+Análise de dados adaptada com auxílio do ChatGPT
