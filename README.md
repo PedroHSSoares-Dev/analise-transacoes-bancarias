@@ -37,6 +37,32 @@ Unir a prática de desenvolvimento com Python + MySQL com fundamentos de:
 
 ---
 
+## ⚙️ Pré-requisitos
+
+- **Python**: Versão 3.8 ou superior (recomendado 3.9)
+- **Docker**: Versão 20.10 ou superior
+- **Docker Compose**: Versão 1.29 ou superior
+- **Bibliotecas Python**: Instale as bibliotecas listadas no `requirements.txt`
+
+---
+
+## 🛠️ Instalação
+
+1. **Instale o Python**:
+   - Baixe a versão mais recente do [Python](https://www.python.org/downloads/) (versão 3.8 ou superior).
+   - Durante a instalação, marque a opção "Add Python to PATH".
+2. **Instale o Docker**:
+   - Siga as instruções de instalação do [Docker Desktop](https://www.docker.com/products/docker-desktop/) para o seu sistema operacional.
+   - Certifique-se de que o Docker esteja em execução após a instalação.
+3. **Instale as dependências Python**:
+   - Navegue até o diretório do projeto no terminal.
+   - Execute o seguinte comando para instalar as bibliotecas necessárias:
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+--
+
 ## 🚀 Como executar
 
 ### 1. Suba o banco de dados com Docker:
@@ -67,6 +93,21 @@ python graficos.py
 ```bash
 streamlit run dashboard.py
 ```
+---
+
+## 💻 Uso
+
+1. **Inicie o sistema**:
+   - No diretório do projeto, execute o seguinte comando para iniciar o sistema usando Docker Compose:
+     ```bash
+     docker-compose up --build
+     ```
+2. **Acesse a interface web**:
+   - Abra seu navegador e acesse `http://localhost:8501` para visualizar a interface do Streamlit.
+3. **Fluxo de trabalho típico**:
+   - **Login**: Insira suas credenciais na página de login.
+   - **Registro de transação**: Navegue até a seção de "Transações" e preencha os detalhes da transação (valor, descrição, categoria).
+   - **Geração de relatório**: Vá para a seção de "Relatórios" e selecione o período desejado para gerar um relatório financeiro.
 
 ---
 
