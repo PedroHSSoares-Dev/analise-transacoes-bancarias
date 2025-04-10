@@ -1,17 +1,9 @@
-# Bibliotecas para análise de dados
 pandas==1.5.3
 numpy==1.24.2
-
-# Bibliotecas para visualização de dados
 matplotlib==3.7.1
 seaborn==0.12.2
-
-# Biblioteca para o dashboard
 streamlit==1.22.0
-
-# Conexão com o MySQL
 mysql-connector-python==8.0.33
-
-# Outras dependências úteis
 sqlalchemy==2.0.15
 python-dotenv==1.0.0
+faker
