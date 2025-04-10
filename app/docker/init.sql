@@ -6,6 +6,11 @@ CREATE TABLE IF NOT EXISTS tbUser (
     Saldo DECIMAL(10,2)
 );
 
+CREATE TABLE IF NOT EXISTS tbTipoTransacao (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Tipo VARCHAR(50) NOT NULL
+);
+
 -- Criação da tabela tbTransacoes com campo Tipo
 CREATE TABLE IF NOT EXISTS tbTransacoes (
     Id INT AUTO_INCREMENT PRIMARY KEY,
@@ -15,7 +20,7 @@ CREATE TABLE IF NOT EXISTS tbTransacoes (
     DataHora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Tipo VARCHAR(50) NOT NULL, -- Novo campo
     FOREIGN KEY (RemetenteId) REFERENCES tbUser(Id),
-    FOREIGN KEY (DestinatarioId) REFERENCES tbUser(Id)
+    FOREIGN KEY (DestinatarioId) REFERENCES tbUser(Id),
 );
 
 -- Inserindo 15 usuários na tabela tbUser (saldo inicial 0.00)
