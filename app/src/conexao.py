@@ -13,7 +13,9 @@ def criar_conexao():
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
             database=os.getenv("DB_NAME"),
-            charset="utf8mb4"
+            charset="utf8mb4",
+            collation='utf8mb4_unicode_ci',
+            use_unicode=True
         )
         return conn
     except mysql.connector.Error as err:
